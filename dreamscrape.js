@@ -67,8 +67,8 @@ Dreamscrape.ParseTimeout =
 
 
 //---------------------------------------------------------------------
-Dreamscrape.GenerateScript =
-	function GenerateScript(StepLines)
+Dreamscrape.CompileSteps =
+	function CompileSteps(StepLines)
 	{
 		var code = '';
 		var log_head_top = '====== ';
@@ -507,10 +507,10 @@ Dreamscrape.RunSteps =
 		var job = {};
 		job.job_id = Date.now();
 		job.time_started = job.job_id;
-		job.steps = StepLines;
+		job.job_steps = StepLines;
 
 		// Generate the script.
-		job.job_script = Dreamscrape.GenerateScript(job.steps);
+		job.job_script = Dreamscrape.CompileSteps(job.job_steps);
 
 		// // Initialize the job folder.
 		// if (npm_fs.existsSync(JobFolder))

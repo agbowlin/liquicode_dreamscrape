@@ -163,7 +163,7 @@ var script_steps = npm_fs.readFileSync(steps_filename).toString().split("\n");
 
 if (app_options.compile)
 {
-	var script = dreamscrape.GenerateScript(script_steps);
+	var script = dreamscrape.CompileSteps(script_steps);
 	console.log(script);
 	npm_process.exit(0);
 }

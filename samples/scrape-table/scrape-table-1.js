@@ -29,7 +29,7 @@ var steps_array = [
 	"#end of script"
 ];
 
-// var script = dreamscrape.GenerateScript(steps_array);
+// var script = dreamscrape.CompileSteps(steps_array);
 // console.log(script);
 
 var job_folder = npm_path.resolve('.');

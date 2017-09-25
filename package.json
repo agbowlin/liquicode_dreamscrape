@@ -1,6 +1,6 @@
 {
     "name": "liquicode_dreamscrape",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "homepage": "https://github.com/agbowlin/liquicode_dreamscrape",
     "description": "A dream R&D tool for web scraping.",
     "authors": [
@@ -33,8 +33,8 @@
     ],
     "ignore": [
         ".*",
-        "job",
-        "node_modules"
+        "job/",
+        "node_modules/"
     ],
     "dependencies": {
         "string": "",
