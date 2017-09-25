@@ -1,0 +1,49 @@
+{
+    "name": "liquicode_dreamscrape",
+    "version": "0.0.2",
+    "homepage": "https://github.com/agbowlin/liquicode_dreamscrape",
+    "description": "A dream R&D tool for web scraping.",
+    "authors": [
+        {
+            "name": "Andre G. Bowlin",
+            "email": "agbowlin@gmail.com",
+            "homepage": "http://liquicode.com"
+        }
+    ],
+    "main": "dreamscrape.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/agbowlin/liquicode_dreamscrape.git"
+    },
+    "license": "MIT",
+    "keywords": [
+        "scrape",
+        "scraping",
+        "casperjs"
+    ],
+    "files": [
+        "engines/*",
+        "samples/*",
+        "dreamscrape-cli.js",
+        "dreamscrape.js",
+        "LICENSE",
+        "package.json",
+        "README.md",
+        "VERSION"
+    ],
+    "ignore": [
+        ".*",
+        "job",
+        "node_modules"
+    ],
+    "dependencies": {
+        "string": "",
+        "command-line-args": "",
+        "command-line-usage": "",
+        "fs-extra": "",
+        "tmp": ""
+    },
+    "devDependencies": {
+
+    }
+}

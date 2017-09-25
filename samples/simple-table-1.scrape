@@ -1,0 +1,11 @@
+#debug: true
+
+#=== Navigate to target page.
+url: https://www.w3schools.com/html/html_tables.asp
+waitfor: table#customers | 3 seconds
+snapshot: 000-target-page
+
+#=== Scrape the table.
+scrapetable: table#customers | customers
+
+#end of script
