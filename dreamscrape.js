@@ -16,7 +16,7 @@ function Dreamscrape()
 	return;
 }
 
-Dreamscrape.engines_folder = 'engines';
+Dreamscrape.engines_folder = npm_path.resolve(__dirname, 'engines');
 
 
 //---------------------------------------------------------------------

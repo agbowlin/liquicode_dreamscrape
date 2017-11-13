@@ -25,7 +25,7 @@ var npm_command_line_args = require('command-line-args');
 var npm_command_line_usage = require('command-line-usage');
 
 var dreamscrape = require('./dreamscrape.js');
-dreamscrape.engines_folder = 'engines';
+// dreamscrape.engines_folder = npm_path.resolve(__dirname, 'engines');
 
 
 //---------------------------------------------------------------------
