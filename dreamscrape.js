@@ -11,8 +11,7 @@ var npm_string = require('string');
 module.exports = Dreamscrape;
 
 
-function Dreamscrape()
-{
+function Dreamscrape() {
 	return;
 }
 
@@ -21,44 +20,36 @@ Dreamscrape.engines_folder = npm_path.resolve(__dirname, 'engines');
 
 //---------------------------------------------------------------------
 Dreamscrape.ScriptError_SyntaxError =
-	function ScriptError_SyntaxError(LineNumber, Message)
-	{
+	function ScriptError_SyntaxError(LineNumber, Message) {
 		return new Error("Syntax error on line " + LineNumber + ". " + Message);
 	};
 
 
 //---------------------------------------------------------------------
 Dreamscrape.ScriptError_InvalidParameters =
-	function ScriptError_InvalidParameters(LineNumber, Command)
-	{
+	function ScriptError_InvalidParameters(LineNumber, Command) {
 		return new Error("Parameter error on line " + LineNumber + ". Invalid parameters for the [" + Command + "] command.");
 	};
 
 
 //---------------------------------------------------------------------
 Dreamscrape.ParseTimeout =
-	function ParseTimeout(TimeoutText)
-	{
+	function ParseTimeout(TimeoutText) {
 		var text = npm_string(TimeoutText).trim().collapseWhitespace();
 		var quantity = text.toFloat();
-		if (isNaN(quantity))
-		{
+		if (isNaN(quantity)) {
 			return null;
 		}
 		var ich = text.indexOf(' ');
-		if (ich >= 0)
-		{
+		if (ich >= 0) {
 			var timespan = text.right(text.length - (ich + 1)).toLowerCase();
-			if (!timespan || (timespan == 'milliseconds') || (timespan == 'ms'))
-			{
+			if (!timespan || (timespan == 'milliseconds') || (timespan == 'ms')) {
 				quantity = quantity * 1;
 			}
-			else if ((timespan == 'seconds') || (timespan == 's'))
-			{
+			else if ((timespan == 'seconds') || (timespan == 's')) {
 				quantity = quantity * 1000;
 			}
-			else
-			{
+			else {
 				return null;
 			}
 		}
@@ -68,8 +59,7 @@ Dreamscrape.ParseTimeout =
 
 //---------------------------------------------------------------------
 Dreamscrape.CompileSteps =
-	function CompileSteps(StepLines)
-	{
+	function CompileSteps(StepLines) {
 		var code = '';
 		var log_head_top = '====== ';
 		// var log_head_major = '->->-> ';
@@ -79,20 +69,17 @@ Dreamscrape.CompileSteps =
 		var log_head_fail = ' FAIL  ';
 
 		var step_lines = StepLines;
-		if (typeof step_lines === 'string' || step_lines instanceof String)
-		{
+		if (typeof step_lines === 'string' || step_lines instanceof String) {
 			// Convert string to an array of lines.
 			step_lines = npm_string(step_lines).lines();
 		}
 
 		// Iterate through lines.
-		for (var line_index = 0; line_index < step_lines.length; line_index++)
-		{
+		for (var line_index = 0; line_index < step_lines.length; line_index++) {
 			var step = npm_string(step_lines[line_index]).trim();
 
 			// Check for blank lines.
-			if (step.length == 0)
-			{
+			if (step.length == 0) {
 				continue;
 			}
 
@@ -102,8 +89,7 @@ Dreamscrape.CompileSteps =
 			code += "// " + step + "\n";
 
 			// Check for comment lines.
-			if (step.startsWith('#'))
-			{
+			if (step.startsWith('#')) {
 				continue;
 			}
 
@@ -115,8 +101,7 @@ Dreamscrape.CompileSteps =
 
 			// Get the command and the parameters.
 			var ich = step.indexOf(':');
-			if (ich < 0)
-			{
+			if (ich < 0) {
 				throw Dreamscrape.ScriptError_SyntaxError(line_index + 1, "Missing ':'.");
 			}
 			var command = step.left(ich).trim();
@@ -127,21 +112,17 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	Debug Command
-			if (command == 'debug')
-			{
+			if (command == 'debug') {
 
 				var value = false;
-				if (params.length == 1)
-				{
+				if (params.length == 1) {
 					value = npm_string(params[0]).trim().toBoolean();
 				}
-				else if (params.length > 1)
-				{
+				else if (params.length > 1) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 
-				if (value)
-				{
+				if (value) {
 					code += "\n";
 					code += "casper.then(\n";
 					code += "    function()\n";
@@ -153,8 +134,7 @@ Dreamscrape.CompileSteps =
 					code += "        Logger.LogTimestamp = true;\n";
 					code += "    });\n";
 				}
-				else
-				{
+				else {
 					code += "\n";
 					code += "casper.then(\n";
 					code += "    function()\n";
@@ -171,11 +151,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	Url Command
-			else if (command == 'url')
-			{
+			else if (command == 'url') {
 
-				if (params.length != 1)
-				{
+				if (params.length != 1) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var url = npm_string(params[0]).trim();
@@ -191,35 +169,28 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	WaitFor Command
-			else if (command == 'waitfor')
-			{
+			else if (command == 'waitfor') {
 
 				var selector = '';
 				var timeout = '';
-				if (params.length == 1)
-				{
+				if (params.length == 1) {
 					timeout = Dreamscrape.ParseTimeout(params[0]);
-					if (!timeout)
-					{
+					if (!timeout) {
 						selector = npm_string(params[0]).trim().collapseWhitespace();
 					}
 				}
-				else if (params.length == 2)
-				{
+				else if (params.length == 2) {
 					selector = npm_string(params[0]).trim().collapseWhitespace();
 					timeout = Dreamscrape.ParseTimeout(params[1]);
-					if (!timeout)
-					{
+					if (!timeout) {
 						throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 					}
 				}
 
-				if (!selector && !timeout)
-				{
+				if (!selector && !timeout) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
-				else if (selector && timeout)
-				{
+				else if (selector && timeout) {
 					code += "\n";
 					code += "casper.waitForSelector(\n";
 					code += "    '" + selector.toString() + "',\n";
@@ -233,8 +204,7 @@ Dreamscrape.CompileSteps =
 					code += "    },\n";
 					code += "    " + timeout.toString() + " );\n";
 				}
-				else if (selector)
-				{
+				else if (selector) {
 					code += "\n";
 					code += "casper.waitForSelector(\n";
 					code += "    '" + selector.toString() + "',\n";
@@ -247,8 +217,7 @@ Dreamscrape.CompileSteps =
 					code += "        Logger.LogMessage( '" + log_head_fail + "Wait for selector [" + selector.toString() + "] failed.' );\n";
 					code += "    });\n";
 				}
-				else if (timeout)
-				{
+				else if (timeout) {
 					code += "\n";
 					code += "casper.wait(\n";
 					code += "    " + timeout.toString() + ",\n";
@@ -262,11 +231,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	SendText Command
-			else if (command == 'sendtext')
-			{
+			else if (command == 'sendtext') {
 
-				if (params.length != 2)
-				{
+				if (params.length != 2) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -285,10 +252,8 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	SendKey Command
-			else if (command == 'sendkey')
-			{
-				if (params.length != 2)
-				{
+			else if (command == 'sendkey') {
+				if (params.length != 2) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -296,47 +261,37 @@ Dreamscrape.CompileSteps =
 				var modifiers = '';
 				var keys = npm_string(params[1]).split('+');
 				keys.forEach(
-					function(key)
-					{
+					function(key) {
 						key = npm_string(key).trim();
 						var lkey = key.toLowerCase();
-						if ((lkey == 'ctl') || (lkey == 'ctrl'))
-						{
-							if (modifiers)
-							{
+						if ((lkey == 'ctl') || (lkey == 'ctrl')) {
+							if (modifiers) {
 								modifiers += '+';
 							}
 							modifiers += "ctrl";
 						}
-						else if (lkey == 'alt')
-						{
-							if (modifiers)
-							{
+						else if (lkey == 'alt') {
+							if (modifiers) {
 								modifiers += '+';
 							}
 							modifiers += "alt";
 						}
-						else if (lkey == 'shift')
-						{
-							if (modifiers)
-							{
+						else if (lkey == 'shift') {
+							if (modifiers) {
 								modifiers += '+';
 							}
 							modifiers += "shift";
 						}
-						else
-						{
+						else {
 							key_code = key;
 						}
 					});
 
-				if (!key_code)
-				{
+				if (!key_code) {
 					throw Dreamscrape.ScriptError_SyntaxError(line_index + 1, "Missing key code.");
 				}
 
-				if (modifiers)
-				{
+				if (modifiers) {
 					modifiers = ", modifiers: '" + modifiers + "'";
 				}
 
@@ -354,11 +309,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	Click Command
-			else if (command == 'click')
-			{
+			else if (command == 'click') {
 
-				if (params.length != 1)
-				{
+				if (params.length != 1) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -374,12 +327,43 @@ Dreamscrape.CompileSteps =
 			}
 
 			//=====================================================================
-			//	ScrapeText Command
-			else if (command == 'scrapetext')
-			{
+			//	ScrapeHtml Command
+			else if (command == 'scrapehtml') {
+				
+				var selector = '';
+				var variable = '';
 
-				if (params.length != 2)
-				{
+				if (params.length == 1) {
+					variable = npm_string(params[0]).trim();
+				}
+				else if (params.length == 2) {
+					selector = npm_string(params[0]).trim();
+					variable = npm_string(params[1]).trim();
+				}
+				else {
+					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
+				}
+
+				code += "\n";
+				code += "casper.then(\n";
+				code += "    function()\n";
+				code += "    {\n";
+				code += "        Logger.LogMessage( '" + log_head_major + "Scraping html from [" + selector.toString() + "].' );\n";
+				if (selector) {
+					code += "        job_data." + variable.toString() + " = casper.getHTML( '" + selector.toString() + "', false );";
+				}
+				else {
+					code += "        job_data." + variable.toString() + " = casper.getHTML();";
+				}
+				code += "    });\n";
+
+			}
+
+			//=====================================================================
+			//	ScrapeText Command
+			else if (command == 'scrapetext') {
+
+				if (params.length != 2) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -397,11 +381,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	ScrapeArray Command
-			else if (command == 'scrapevalue')
-			{
+			else if (command == 'scrapevalue') {
 
-				if (params.length != 3)
-				{
+				if (params.length != 3) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -420,11 +402,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	ScrapeArray Command
-			else if (command == 'scrapearray')
-			{
+			else if (command == 'scrapearray') {
 
-				if (params.length != 3)
-				{
+				if (params.length != 3) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -443,11 +423,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	ScrapeTable Command
-			else if (command == 'scrapetable')
-			{
+			else if (command == 'scrapetable') {
 
-				if (params.length != 2)
-				{
+				if (params.length != 2) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var selector = npm_string(params[0]).trim();
@@ -465,11 +443,9 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	Snapshot Command
-			else if (command == 'snapshot')
-			{
+			else if (command == 'snapshot') {
 
-				if (params.length != 1)
-				{
+				if (params.length != 1) {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
 				var snapshotname = npm_string(params[0]).trim();
@@ -486,8 +462,7 @@ Dreamscrape.CompileSteps =
 
 			//=====================================================================
 			//	Unknown Command
-			else
-			{
+			else {
 				throw Dreamscrape.ScriptError_SyntaxError(line_index + 1, "Unknown command [" + command + "].");
 			}
 
@@ -500,8 +475,7 @@ Dreamscrape.CompileSteps =
 
 //---------------------------------------------------------------------
 Dreamscrape.RunSteps =
-	function RunSteps(StepLines, JobFolder, OnStartCallback, OnErrorCallback, OnFinishCallback)
-	{
+	function RunSteps(StepLines, JobFolder, OnStartCallback, OnErrorCallback, OnFinishCallback) {
 
 		// Create a new job.
 		var job = {};
@@ -546,8 +520,7 @@ Dreamscrape.RunSteps =
 		var options = {};
 		options.cwd = JobFolder;
 		npm_exec(command, options,
-			function(error, stdout, stderr)
-			{
+			function(error, stdout, stderr) {
 				// Mark the completion time.
 				job.time_finished = Date.now();
 				job.seconds_elapsed = (job.time_finished - job.time_started) / 1000;
@@ -559,12 +532,10 @@ Dreamscrape.RunSteps =
 				// List the artifacts.
 				job.artifacts = [];
 				npm_fs.readdirSync(JobFolder).forEach(
-					function(entry_name)
-					{
+					function(entry_name) {
 						if ((entry_name != '_job_script.js') &&
 							(entry_name != '_job.json') &&
-							(entry_name != '_client_inject_1.js'))
-						{
+							(entry_name != '_client_inject_1.js')) {
 							job.artifacts.push(entry_name);
 						}
 					});
@@ -584,15 +555,13 @@ Dreamscrape.RunSteps =
 
 //=====================================================================
 // Integrate with the browser environment.
-if (typeof window != 'undefined')
-{
+if (typeof window != 'undefined') {
 	window['Dreamscrape'] = Dreamscrape;
 }
 
 
 //=====================================================================
 // Integrate with the nodejs environment.
-if (typeof exports != 'undefined')
-{
+if (typeof exports != 'undefined') {
 	exports.Dreamscrape = Dreamscrape;
 }

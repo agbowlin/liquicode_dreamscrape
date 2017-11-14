@@ -176,25 +176,24 @@ casper.GetElementText = function GetElementText(Selector)
 };
 
 
-// SmileCommon_Client_New_ArrayTableCell =
-// 	function Client_New_ArrayTableCell(Text) { return CI_New_ArrayTableCell(Text); }
+//=====================================================================
+// Functions defined in _client_inject_1.js
+//=====================================================================
 
-// SmileCommon_Client_New_ArrayTable =
-// 	function Client_New_ArrayTable() { return CI_New_ArrayTable(); }
+/* global CI_GetFirst_innerText */
+/* global CI_Get_innerText */
+/* global CI_Get_href */
+/* global CI_Get_Attribute */
 
-// SmileCommon_Client_Grow_ArrayTable =
-// 	function Client_Grow_ArrayTable(ArrayTable, RowCount, ColumnCount) { return CI_Grow_ArrayTable(ArrayTable, RowCount, ColumnCount); }
-
-// SmileCommon_Client_HtmlTable_Append_ArrayTable =
-// 	function Client_HtmlTable_Append_ArrayTable(HtmlTable, ArrayTable) { return CI_HtmlTable_Append_ArrayTable(document.querySelector(HtmlTable), ArrayTable); }
-
-// SmileCommon_Client_HtmlTable_To_ArrayTable =
-// 	function Client_HtmlTable_To_ArrayTable(HtmlTable, SpanCells, FillSpans) { return CI_HtmlTable_To_ArrayTable(document.querySelector(HtmlTable), SpanCells, FillSpans); }
-
-
+/* global CI_ArrayTable_NewCell */
 /* global CI_ArrayTable_New */
+/* global CI_ArrayTable_Grow */
+/* global CI_HtmlTable_Append_ArrayTable */
+/* global CI_HtmlElement_To_ArrayTableCell */
 /* global CI_HtmlTable_To_ArrayTable */
 
+
+//=====================================================================
 casper.Scrape_Table = function Scrape_Table(HtmlTable, SpanCells, FillSpans)
 {
 	var array_table = null;
