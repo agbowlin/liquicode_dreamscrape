@@ -6,6 +6,7 @@ var npm_fs = require('fs');
 var npm_exec = require('child_process').exec;
 
 var npm_string = require('string');
+var npm_tmp = require('tmp'); // For temp files
 
 
 module.exports = Dreamscrape;
@@ -329,7 +330,7 @@ Dreamscrape.CompileSteps =
 			//=====================================================================
 			//	ScrapeHtml Command
 			else if (command == 'scrapehtml') {
-				
+
 				var selector = '';
 				var variable = '';
 
@@ -483,19 +484,27 @@ Dreamscrape.RunSteps =
 		job.time_started = job.job_id;
 		job.job_steps = StepLines;
 
+		var tmp_folder = npm_tmp.dirSync({ unsafeCleanup: true });
+		if (JobFolder) {
+			job.path = JobFolder;
+		}
+		else {
+			job.path = tmp_folder.name;
+		}
+
+		// // Initialize the job folder.
+		// if (npm_fs.existsSync(job.path))
+		// {
+		// 	// npm_fs.unlinkSync(job.path);
+		// 	npm_fs.rmdirSync(job.path);
+		// }
+		// npm_fs.mkdirSync(job.path);
+
 		// Generate the script.
 		job.job_script = Dreamscrape.CompileSteps(job.job_steps);
 
-		// // Initialize the job folder.
-		// if (npm_fs.existsSync(JobFolder))
-		// {
-		// 	// npm_fs.unlinkSync(JobFolder);
-		// 	npm_fs.rmdirSync(JobFolder);
-		// }
-		// npm_fs.mkdirSync(JobFolder);
-
 		// Make an initial save of the job.
-		var project_job_filename = npm_path.join(JobFolder, '_job.json');
+		var project_job_filename = npm_path.join(job.path, '_job.json');
 		npm_fs.writeFileSync(project_job_filename, JSON.stringify(job, null, 4));
 
 		// Notify that we are starting.
@@ -506,19 +515,19 @@ Dreamscrape.RunSteps =
 		var template = npm_fs.readFileSync(script_template_path);
 		var script = npm_string(template);
 		script = '' + script.replace('// {{script_me}}', job.job_script);
-		var script_filename = npm_path.join(JobFolder, '_job_script.js');
+		var script_filename = npm_path.join(job.path, '_job_script.js');
 		npm_fs.writeFileSync(script_filename, script);
 
 		// Make sure the client dependencies exist.
 		var client_inject_path = npm_path.join(Dreamscrape.engines_folder, 'casperjs/_client_inject_1.js');
 		var file_content = npm_fs.readFileSync(client_inject_path);
-		var client_script_filename = npm_path.join(JobFolder, '_client_inject_1.js');
+		var client_script_filename = npm_path.join(job.path, '_client_inject_1.js');
 		npm_fs.writeFileSync(client_script_filename, file_content);
 
 		// Execute.
 		var command = 'casperjs ' + script_filename;
 		var options = {};
-		options.cwd = JobFolder;
+		options.cwd = job.path;
 		npm_exec(command, options,
 			function(error, stdout, stderr) {
 				// Mark the completion time.
@@ -531,7 +540,7 @@ Dreamscrape.RunSteps =
 
 				// List the artifacts.
 				job.artifacts = [];
-				npm_fs.readdirSync(JobFolder).forEach(
+				npm_fs.readdirSync(job.path).forEach(
 					function(entry_name) {
 						if ((entry_name != '_job_script.js') &&
 							(entry_name != '_job.json') &&
