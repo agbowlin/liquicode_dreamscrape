@@ -446,10 +446,19 @@ Dreamscrape.CompileSteps =
 			//	Snapshot Command
 			else if (command == 'snapshot') {
 
-				if (params.length != 1) {
+				var snapshotname = '';
+				var selector = '';
+
+				if (params.length == 1) {
+					snapshotname = npm_string(params[0]).trim();
+				}
+				else if (params.length == 2) {
+					snapshotname = npm_string(params[0]).trim();
+					selector = npm_string(params[1]).trim();
+				}
+				else {
 					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
 				}
-				var snapshotname = npm_string(params[0]).trim();
 
 				code += "\n";
 				code += "casper.then(\n";
@@ -457,6 +466,26 @@ Dreamscrape.CompileSteps =
 				code += "    {\n";
 				code += "        Logger.LogMessage( '" + log_head_major + "Saving snapshot [" + snapshotname.toString() + "].' );\n";
 				code += "        casper.GetPageSnapshot( '" + snapshotname.toString() + "', true, true );\n";
+				code += "    });\n";
+
+			}
+
+			//=====================================================================
+			//	SnapshotSelector Command
+			else if (command == 'snapshotselector') {
+
+				if (params.length != 2) {
+					throw Dreamscrape.ScriptError_InvalidParameters(line_index + 1, command.toString());
+				}
+				var snapshotname = npm_string(params[0]).trim();
+				var selector = npm_string(params[1]).trim();
+
+				code += "\n";
+				code += "casper.then(\n";
+				code += "    function()\n";
+				code += "    {\n";
+				code += "        Logger.LogMessage( '" + log_head_major + "Saving selector  [" + selector.toString() + "] to snapshot [" + snapshotname.toString() + "].' );\n";
+				code += "        casper.GetSelectorSnapshot( '" + snapshotname.toString() + "', '" + selector.toString() + "', true, true );\n";
 				code += "    });\n";
 
 			}
